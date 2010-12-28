@@ -4,4 +4,3 @@ gem 'smusher'
 
 # Specify your gem's dependencies in rack-smusher.gemspec
 gemspec
-
