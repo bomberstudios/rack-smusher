@@ -10,9 +10,12 @@ class Rack::Smusher
     @app = app
     @options = {
       :cache => true,
-      :cache_path => "cache",
+      :cache_path => ".cache",
       :image_path => "public"
     }.merge(options)
+    if !File.exist? @options[:cache_path]
+      mkdir @options[:cache_path]
+    end
     instance_eval(&block) if block_given?
   end
 
