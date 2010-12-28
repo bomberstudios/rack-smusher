@@ -8,7 +8,7 @@ It is intended to be used with [serve](http://github.com/jlong/serve), but it ma
 
 ## Why?
 
-I like to save my Fireworks editable files in the public folder while designing / prototyping. 
+Because I like to save my Fireworks editable files in the public folder while designing / prototyping. That, and it seemed like a fun miniproject.
 
 
 ## Usage
