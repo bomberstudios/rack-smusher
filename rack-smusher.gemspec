@@ -1,15 +1,17 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
 
+require 'rack/smusher'
+
 Gem::Specification.new do |s|
   s.name        = "rack-smusher"
   s.version     = Rack::Smusher::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["TODO: Write your name"]
-  s.email       = ["TODO: Write your email address"]
-  s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.authors     = ["Ale Muñoz"]
+  s.email       = ["bomberstudios@gmail.com"]
+  s.homepage    = "http://github.com/bomberstudios/rack-smusher"
+  s.summary     = %q{Smush your images}
+  s.description = %q{rack-smusher uses the smusher gem to compress your images dinamically}
 
   s.rubyforge_project = "rack-smusher"
 
