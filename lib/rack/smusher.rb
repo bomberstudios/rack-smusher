@@ -1,5 +1,6 @@
 require "rack"
 require "smusher"
+require 'digest/md5'
 
 class Rack::Smusher
 
@@ -9,7 +10,8 @@ class Rack::Smusher
     @app = app
     @options = {
       :cache => true,
-      :cache_path => "cache/images"
+      :cache_path => "cache",
+      :image_path => "public"
     }.merge(options)
     instance_eval(&block) if block_given?
   end
@@ -17,13 +19,20 @@ class Rack::Smusher
   def call(env)
     status, headers, body = @app.call(env)
 
-    puts headers['Content-Type'].inspect
-    # route = env['PATH_INFO']
-    # file = Dir.pwd + "/#{@options[:notes_path]}" + route.gsub(/\/$/,'') + '.txt'
-    # if File.exists?(file)
-    #   note = File.readlines(file).to_s
-    #   body.body.gsub!("</body>","<div id='racknotes'>#{note}</div><style>#racknotes { #{@options[:css]} #{@options[:extra_css]} }</style></body>")
-    # end
+    type = headers['Content-Type']
+
+    if type == 'image/png'
+      file = @options[:image_path] + env['PATH_INFO']
+      file_hash = Digest::MD5.hexdigest(File.read(file))
+
+      target = @options[:cache_path] + '/' + file_hash + '_' + File.basename(file)
+      if !File.exist? target
+        cp_r file, target, { :verbose => false }
+        %x(smusher #{target})
+      end
+
+      body = File.read(target)
+    end
 
     @response = Rack::Response.new(body, status, headers)
     @response.to_a
