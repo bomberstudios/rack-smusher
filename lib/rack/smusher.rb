@@ -29,7 +29,7 @@ class Rack::Smusher
       file_hash = Digest::MD5.hexdigest(File.read(file))
 
       target = @options[:cache_path] + '/' + file_hash + '_' + File.basename(file)
-      if !File.exist? target
+      if !File.exist? target || @options[:cache] == false
         cp_r file, target, { :verbose => false }
         %x(smusher #{target})
       end
