@@ -2,43 +2,64 @@ require "rack"
 require "smusher"
 require 'digest/md5'
 
+class String
+  def - arg
+    copy = self.dup
+    copy[arg] = ""
+    return copy
+  end
+end
+
 class Rack::Smusher
 
-  VERSION = "0.0.2"
+  VERSION = "0.0.3"
 
   def initialize(app, options = {}, &block)
     @app = app
     @options = {
-      :cache => true,
-      :cache_path => ".cache",
-      :image_path => "public"
+      :source => "public/images/source",
+      :target => "public/images",
+      :base_url => "/images/"
     }.merge(options)
-    if !File.exist? @options[:cache_path]
-      mkdir @options[:cache_path]
-    end
     instance_eval(&block) if block_given?
   end
 
   def call(env)
     status, headers, body = @app.call(env)
 
-    type = headers['Content-Type']
+    if env['PATH_INFO'][/png/]
+      should_compress = false
+      source_path = @options[:source] + '/' + (env['PATH_INFO'] - @options[:base_url])
+      target_path = @options[:target] + '/' + (env['PATH_INFO'] - @options[:base_url])
 
-    if type == 'image/png'
-      file = @options[:image_path] + env['PATH_INFO']
-      file_hash = Digest::MD5.hexdigest(File.read(file))
+      there_is_a_source_file = File.exist?(source_path)
+      there_is_a_target_file = File.exist?(target_path)
 
-      target = @options[:cache_path] + '/' + file_hash + '_' + File.basename(file)
-      if !File.exist? target || @options[:cache] == false
-        cp_r file, target, { :verbose => false }
-        %x(smusher #{target})
+      if there_is_a_source_file && there_is_a_target_file
+        if File.mtime(source_path) > File.mtime(target_path)
+          should_compress = true
+        end
       end
 
-      body = File.read(target)
+      if !there_is_a_target_file && there_is_a_source_file
+        should_compress = true
+      end
+
+      if should_compress
+        status, body = compress source_path, target_path
+      end
     end
 
     @response = Rack::Response.new(body, status, headers)
     @response.to_a
+  end
+
+  def compress source, target
+    puts "compressing #{source}"
+    mkdir_p File.dirname(target), { :verbose => false }
+    cp_r source, target, { :verbose => false }
+    %x(smusher #{target})
+    [200, File.read(target)]
   end
 
 end

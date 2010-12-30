@@ -8,16 +8,24 @@ It is intended to be used with [serve](http://github.com/jlong/serve), but it ma
 
 ## Why?
 
-Because I like to save my Fireworks editable files in the public folder while designing / prototyping. That, and it seemed like a fun miniproject.
+I like to save Fireworks editable files inside my serve project, and store them in the git repository. Thus, collaborators have access to the source files and can make changes, history is preserved, and life is good.
+
+That, and it seemed like a fun miniproject :)
 
 
 ## Usage
+
+Put this in your config.ru:
 
     gem 'rack-smusher'
     require 'rack/smusher'
     
     use Rack::Smusher, {
-      :cache_path => "cache",
-      :image_path => "public"
+      :source => "app/images",
+      :target => "public/images",
+      :base_url => "/images/"
     }
 
+Now, you can save your editable files in `app/images`, and rack-smusher will compress and copy them to `public/images` when the browser requests them. Folder structure will be preserved, so a file saved in `app/images/foo/bar.png` will be saved to `public/images/foo/bar.png`.
+
+If for some reason your app uses a different path for images (say, `/img/`) you can specify it in the `:base_url` option.
