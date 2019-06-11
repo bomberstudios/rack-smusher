@@ -2,12 +2,15 @@ PATH
   remote: .
   specs:
     rack-smusher (0.0.1)
+      rack
+      smusher
 
 GEM
   remote: http://rubygems.org/
   specs:
     httpclient (2.1.6)
-    json (1.4.6)
+    json (2.2.0)
+    rack (2.0.7)
     rake (0.8.7)
     smusher (0.4.6)
       httpclient
@@ -18,5 +21,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  rack
   rack-smusher!
   smusher
