@@ -11,7 +11,7 @@ GEM
     httpclient (2.1.6)
     json (2.2.0)
     rack (2.0.8)
-    rake (0.8.7)
+    rake (13.0.1)
     smusher (0.4.6)
       httpclient
       json
